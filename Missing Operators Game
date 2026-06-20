@@ -1,0 +1,87 @@
+import random
+
+print("Welcome to the Ultimate Missing Operator Challenge!")
+
+def generate_simple_question(level):
+    """Generate a simple question with one missing operator."""
+    if level == 1:
+        num_range = (1, 10)
+        operators = ['+', '-', '*']
+    elif level == 2:
+        num_range = (1, 100)
+        operators = ['+', '-', '*', '/']
+    else:
+        num_range = (1, 200)
+        operators = ['+', '-', '*', '/']
+
+    num1 = random.randint(*num_range)
+    num2 = random.randint(*num_range)
+    op = random.choice(operators)
+
+    # Avoid division by zero
+    if op == '/':
+        num2 = random.randint(1, num_range[1])
+
+    answer = eval(f"{num1} {op} {num2}")
+
+    question_str = f"{num1} __ {num2} = {answer}"
+    return question_str, op
+
+def generate_complex_question(level):
+    """Generate a question with multiple missing operators and parentheses."""
+    if level == 3:
+        # Build a complex expression with parentheses
+        nums = [random.randint(1, 200) for _ in range(6)]
+        ops = [random.choice(['+', '-', '*', '/']) for _ in range(5)]
+        # Randomly add parentheses
+        expr = f"{nums[0]} {ops[0]} {nums[1]}"
+        if random.choice([True, False]):
+            expr = f"({expr})"
+        expr += f" {ops[1]} {nums[2]}"
+        # Evaluate the expression
+        try:
+            answer = eval(expr)
+        except ZeroDivisionError:
+            return generate_complex_question(level)  # Retry if division by zero
+        question_str = f"Calculate: {expr} = ?"
+        # For the answer, we need to ask for missing operators, so we simulate that
+        # For simplicity, let's assume the user has to figure out the operators
+        return question_str, expr
+    else:
+        # For lower levels, fallback to simple question
+        return generate_simple_question(level)
+
+score = 0
+
+for level in range(1, 4):
+    print(f"\n=== Level {level} ===")
+    rounds = 3
+    for _ in range(rounds):
+        if level < 3:
+            question, correct_op = generate_simple_question(level)
+        else:
+            question, expr = generate_complex_question(level)
+
+        print(question)
+
+        if level < 3:
+            user_input = input("Fill in the missing operator (+, -, *): ").strip()
+            if user_input == correct_op:
+                print("Correct! Great job.\n")
+                score += 1
+            else:
+                print(f"Wrong. The correct operator was '{correct_op}'.\n")
+        else:
+            # For level 3, ask the user to deduce missing operators
+            print("Your task: Deduce the operators used in the expression.")
+            print("Note: You can use +, -, *, / in your answer, in order.")
+            user_input = input("Enter the sequence of operators (e.g., + -): ").strip()
+            # Extract operators from the expression for comparison
+            import re
+            ops_in_expr = re.findall(r'[\+\-\*/]', expr)
+            if user_input.replace(" ", "") == "".join(ops_in_expr):
+                print("Excellent! Correct operators.\n")
+                score += 1
+            else:
+                print(f"Oops! The correct operators were: {' '.join(ops_in_expr)}.\n")
+print(f"Game Over! Your total score: {score} out of {rounds * 3}")
