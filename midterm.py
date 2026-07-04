@@ -45,7 +45,7 @@ password = "shadow"
 attempts = 3
 
 #Password is shadow. There are 3 attempts to guess it. This is the first challenge. Good luck to guess the password!!
-#There will be some hints if you get the first attempt wrong.
+#There will be some hints if you get the first attempt wrong. Just pick a random word for the first try.
 
 while attempts > 0:
     answer = input("Enter the password: ").strip().lower()
@@ -172,6 +172,13 @@ print()
 # -------------------------------------------------
 # FINAL SCORE
 # -------------------------------------------------
+
+#I used a variable called score that starts at 0. Whenever the player completes a challenge successfully, I add points using score +=. The points from each level are added together to calculate the final score out of 70.
+#Password Challenge: +10 points
+#Math Challenge: +10 points for each correct question (3 questions = 30 points)
+#Vault Code Challenge: +15 points
+#Laser Maze: +15 points
+#If the exit is reached, since ppl failed the tasks: No more points can be earned, The remaining levels are skipped, and The final score is not displayed.
 
 print("=" * 45)
 print("MISSION COMPLETE")
